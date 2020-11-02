@@ -1,5 +1,6 @@
 C:\MyData\AppSource\MVCApp\YOYOTest\bin\Debug\netcoreapp3.1\appsettings.Development.json
 C:\MyData\AppSource\MVCApp\YOYOTest\bin\Debug\netcoreapp3.1\appsettings.json
+C:\MyData\AppSource\MVCApp\YOYOTest\bin\Debug\netcoreapp3.1\Common\Fitnessratings.json
 C:\MyData\AppSource\MVCApp\YOYOTest\bin\Debug\netcoreapp3.1\Common\Players.json
 C:\MyData\AppSource\MVCApp\YOYOTest\bin\Debug\netcoreapp3.1\package-lock.json
 C:\MyData\AppSource\MVCApp\YOYOTest\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
@@ -42,4 +43,3 @@ C:\MyData\AppSource\MVCApp\YOYOTest\obj\Debug\netcoreapp3.1\staticwebassets\YOYO
 C:\MyData\AppSource\MVCApp\YOYOTest\obj\Debug\netcoreapp3.1\YOYOTest.dll
 C:\MyData\AppSource\MVCApp\YOYOTest\obj\Debug\netcoreapp3.1\YOYOTest.pdb
 C:\MyData\AppSource\MVCApp\YOYOTest\obj\Debug\netcoreapp3.1\YOYOTest.genruntimeconfig.cache
-C:\MyData\AppSource\MVCApp\YOYOTest\bin\Debug\netcoreapp3.1\Common\Fitnessratings.json

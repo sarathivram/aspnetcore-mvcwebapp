@@ -8,23 +8,26 @@ using Microsoft.Extensions.Logging;
 using YOYOTest.Models;
 using YOYOTest.Business.Interface;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
 
 namespace YOYOTest.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IHomeService _homeService;
-        public HomeController(ILogger<HomeController> logger, IHomeService homeService)
+        private readonly IHomeService _homeService;             
+        private readonly IWebHostEnvironment _env;
+        public HomeController(ILogger<HomeController> logger, IHomeService homeService, IWebHostEnvironment webHostEnvironment)
         {
             _logger = logger;
             _homeService = homeService;
+            _env = webHostEnvironment;
         }
 
         public IActionResult Index()
         {
-            var YOYOTestTrack = _homeService.AssignData();
-            
+            string path = _env.ContentRootPath;
+            var YOYOTestTrack = _homeService.AssignData(path);            
             return PartialView("Index", YOYOTestTrack);
         }
 

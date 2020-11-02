@@ -63,14 +63,15 @@
 <div id="TimeDistance">
   <div class="row">
     <div class="playbtn" onclick="playbtn(event)">
-      <img class="play" style="height: 255px; width:500px" src="~/image/button-png.png">
+      <img class="play" style="height: 510; width:510" src="~/image/button-png.png">
     </div>
     <div class="col-6 col-sm-3 startbtn" style="display: none">
       <div class="counter" data-cp-percentage="75" data-cp-color="#00bfeb"></div>
     </div>
   </div>
+  <br />
 
-  <div class="row">
+  <div class="row" align="center">
     <div>NEXT<br />SHUTTLE<br /><span id="nextshuttletime">00:</span> s&nbsp;&nbsp;</div> &nbsp;&nbsp;
     <div style="height: 60px;  border-left: 2px solid black;"></div>
     &nbsp;&nbsp;
@@ -83,41 +84,46 @@
     </div> &nbsp;&nbsp;
     <div style="height: 60px;  border-left: 2px solid black;"></div>
     &nbsp;&nbsp;
-    <div>TOTAL<br />DISTANCE <br /><span id="totalDistance">00:0</span>m</div>
+    <div>TOTAL<br />DISTANCE <br /><span id="totalDistance">00:0</span> m</div>
   </div>
 </div>
 
-<div class="row">
-  <table id="trackTable" style="height: 500px" class="table table-striped table-hover table-responsive" >
+<div class="row" style="height: 510; width:510">
+  <div> <strong>Track</strong></div>
+  <hr width="500px">
+  <table id="trackTable" style="height: 500px" class="table table-striped table-hover table-responsive">
     @for (var i = 0; i < Model.players.Count(); i++)
     {
       <tr>
         <td>
-          @Html.HiddenFor(it => it.players[i].id)
+          @Html.DisplayFor(it => it.players[i].id)
         </td>
-        <td> &nbsp;
+        <td align="left"> &nbsp;
           @Html.DisplayFor(it => it.players[i].name)
         </td>
-        <td onclick="warn(event)">
-          &nbsp; &nbsp; <button class="btn btn-primary button tdwarn">Warn</button>
-        </td>
-        <td onclick="stop(event)">
-          &nbsp; &nbsp; <button class="btn btn-warning button tdstop">Stop</button>&nbsp; &nbsp;
+        <td>
+          &nbsp; &nbsp; <button class="btn btn-primary button tdwarn d-none" onclick="warn(event)">Warn</button>
         </td>
         <td>
-          <div class="btn-group" >
+          &nbsp; &nbsp; <button class="btn btn-warning button tdstop d-none" onclick="stop(event)" >Stop</button>&nbsp; &nbsp;
+        </td>
+        <td>
+          <div class="btn-group">
             <button class="btn btn-white btn-sm dropdown-toggle" onclick="openMenus(event)" type="button"
             aria-haspopup="true" aria-expanded="false">
-             <span class="clsLevel">0</span>-<span class="clsShuttle">0</span>
+              <span class="clsLevel">0</span>-<span class="clsShuttle">0</span>
             </button>
             <div class="dropdown-menu">
-              <div class="dropdown-item" >Level : <span style="width: 50px" class="clsLevel float-right p-1" onclick="updateVal(event)">0</span>
-              <input type="text" value="" class="levelinput d-none"/>
+              <div class="dropdown-item">Level : <span style="width: 50px" class="clsLevel float-right p-1"
+                onclick="updateVal(event)">0</span>
+                <input type="text" value="" class="levelinput d-none" />
               </div>
-              <div class="dropdown-item" >Shuttle : <span style="width: 50px" class="clsShuttle float-right p-1" onclick="updateVal(event)">0</span>
-              <input type="text" value="" class="shuttleinput d-none"/>
+              <div class="dropdown-item">Shuttle : <span style="width: 50px" class="clsShuttle float-right p-1"
+                onclick="updateVal(event)">0</span>
+                <input type="text" value="" class="shuttleinput d-none" />
               </div>
-              <div class="dropdown-item" ><button class="btn btn-sm btn-primary" onclick="save(event)">Update</button> </div>
+              <div class="dropdown-item"><button class="btn btn-sm btn-primary" onclick="save(event)">Update</button>
+              </div>
             </div>
           </div>
         </td>
@@ -129,37 +135,41 @@
 <script type="text/javascript">
   var level, shuttle, levelTime, mdlspeed, mdlStarttime;
   var commonIndex = 0;
-  var circleProgress, wrapper;
+  var circleProgress, wrapper, mdlStartSec;
 
-  function openMenus(event){
-    var parentNode = event.currentTarget.parentNode.parentNode;
-    $(parentNode.querySelector('.btn-group')).addClass('show');
-    $(parentNode.querySelector('.dropdown-menu')).addClass('show');
+  function openMenus(event) {
+  var parentNode = event.currentTarget.parentNode.parentNode;
+  $(parentNode.querySelector('.btn-group')).addClass('show');
+  $(parentNode.querySelector('.dropdown-menu')).addClass('show');
   }
 
-  function  updateVal(event)
-  {
-    var parentNode = event.currentTarget.parentNode.parentNode.parentNode;
-    $(parentNode.querySelector('.clsLevel')).addClass('d-none');
-    $(parentNode.querySelector('.clsShuttle')).addClass('d-none');
-    $(parentNode.querySelector('.levelinput')).removeClass('d-none');
-    $(parentNode.querySelector('.shuttleinput')).removeClass('d-none');
-    $(parentNode.querySelector('.levelinput')).val(parentNode.querySelector('.clsLevel').innerText);
-    $(parentNode.querySelector('.shuttleinput')).val(parentNode.querySelector('.clsShuttle').innerText);
-    @* console.log(parentNode.innerText); *@
+  function updateVal(event) {
+  var parentNode = event.currentTarget.parentNode.parentNode.parentNode;
+  $(parentNode.querySelector('.clsLevel')).addClass('d-none');
+  $(parentNode.querySelector('.clsShuttle')).addClass('d-none');
+  $(parentNode.querySelector('.levelinput')).removeClass('d-none');
+  $(parentNode.querySelector('.shuttleinput')).removeClass('d-none');
+  $(parentNode.querySelector('.levelinput')).val(parentNode.querySelector('.clsLevel').innerText);
+  $(parentNode.querySelector('.shuttleinput')).val(parentNode.querySelector('.clsShuttle').innerText);
+  @* console.log(parentNode.innerText); *@
   }
 
-  function save(event){
-    var parentNode = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode;
-    $(parentNode.querySelectorAll('.clsLevel')).text($(parentNode.querySelector('.levelinput')).val());
-    $(parentNode.querySelectorAll('.clsShuttle')).text($(parentNode.querySelector('.shuttleinput')).val());
-    $(parentNode.querySelector('.clsLevel')).removeClass('d-none');
-    $(parentNode.querySelector('.clsShuttle')).removeClass('d-none');
-    $(parentNode.querySelector('.levelinput')).addClass('d-none');
-    $(parentNode.querySelector('.shuttleinput')).addClass('d-none');
-    $(parentNode.querySelector('.btn-group')).removeClass('show');
-    $(parentNode.querySelector('.dropdown-menu')).removeClass('show');
-     
+  function save(event) {
+  var parentNode = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode;
+
+  var vallevel = $(parentNode.querySelector('.levelinput')).val();
+  var valshuttle = $(parentNode.querySelector('.shuttleinput')).val();
+
+  if(vallevel !="") $(parentNode.querySelectorAll('.clsLevel')).text(vallevel);
+  if(valshuttle !="")  $(parentNode.querySelectorAll('.clsShuttle')).text(valshuttle);
+
+  $(parentNode.querySelector('.clsLevel')).removeClass('d-none');
+  $(parentNode.querySelector('.clsShuttle')).removeClass('d-none');
+  $(parentNode.querySelector('.levelinput')).addClass('d-none');
+  $(parentNode.querySelector('.shuttleinput')).addClass('d-none');
+  $(parentNode.querySelector('.btn-group')).removeClass('show');
+  $(parentNode.querySelector('.dropdown-menu')).removeClass('show');
+
   }
 
   function AssignVal(indexval) {
@@ -169,7 +179,7 @@
   shuttle = model[indexval].shuttleNo;
   levelTime = parseFloat(model[indexval].levelTime) * (1000);
   mdlspeed = model[indexval].speed;
-  mdlStartSec = model[indexval + 1].startTime;
+  mdlStartSec = parseFloat(model[indexval + 1].startTime) * (1000);
   $('#nextshuttletime').text(model[indexval + 1].levelTime);
   $('#totalDistance').html(model[indexval].accumulatedShuttleDistance);
   }
@@ -195,19 +205,15 @@
   var Starttimeval = new Date();
   var Resttimeval = new Date();
 
+  var restflag = 0;
   var setStarttimeval = new Date(Starttimeval.setSeconds(0));
   var setResttimeval = new Date(Resttimeval.setSeconds(0));
-
-  var minToMilli = 0; var secToMilli = 0;
-  var curMilliSec = 0;
   var currenttime = 0;
-
 
   function startTimer() {
   timex = setTimeout(function () {
   setStarttimeval.setSeconds(levelTime / 1000);
-  setResttimeval.setSeconds(mdlStartSec);
-
+  setResttimeval.setSeconds(mdlStartSec / 1000);
   seconds++;
   currenttime++;
 
@@ -215,11 +221,6 @@
   currenttime = 0;
   AssignVal(commonIndex + 1);
   $('.counter').click();
-  }
-
-  if (setResttimeval.getSeconds() > curMilliSec) {
-  //callStartTime      
-  console.log('startYes');
   }
 
   if (seconds > 59) {
@@ -246,22 +247,19 @@
   }, 1000);
   }
 
- $(".play").click(function () {
+  $(".play").click(function () {
   startTimer();
-   document.querySelector(".play").style.display = "none";
-  document.querySelector(".startbtn").style.display = "block";
+  document.querySelector(".play").style.display = "none";
+  document.querySelector(".startbtn").style.display = "block"; 
+  $('.tdwarn, .tdstop').removeClass('d-none');
   AssignVal(0);
-  }); 
-
+  });
   });
 
   function playbtn(event) {
-  @* document.querySelector(".play").style.display = "none";
-  document.querySelector(".startbtn").style.display = "block";
-  AssignVal(0); *@
-  setTimeout(function(){
-    $('.counter').click();
-  },100)
+  setTimeout(function () {
+  $('.counter').click();
+  }, 100)
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -317,7 +315,7 @@
   if (time <= duration) {
   var x = easeInOutQuart(time, from, to - from, duration);
   newPercent = x;
-  text.innerHTML = "Level :" + level + " <br/> Shuttle :" + shuttle + "<br/>" + mdlspeed + "km/h";
+  text.innerHTML = "Level :" + level + " <br/> Shuttle :" + shuttle + "<br/>" + mdlspeed + " km/h";
   drawArc();
   }
   }
@@ -373,6 +371,6 @@
   function getRandom(min, max) {
   return Math.random() * (max - min) + min;
   }
-   });
+  });
 
 </script>
