@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "2NWuosFb+0VwuEIpwI+dlutTH8i9eo+RN5eLr/rYXmYJyjDSYG8QR/++EQz7bAASiVs1e695tRULVvm/ZNeAww==",
+  "success": true,
+  "projectFilePath": "C:\\MyData\\AppSource\\MVCApp\\YOYOTest\\YOYOTest.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\SarathiV\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\3.1.9\\microsoft.aspnetcore.jsonpatch.3.1.9.nupkg.sha512",
+    "C:\\Users\\SarathiV\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\3.1.9\\microsoft.aspnetcore.mvc.newtonsoftjson.3.1.9.nupkg.sha512",
+    "C:\\Users\\SarathiV\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\SarathiV\\.nuget\\packages\\newtonsoft.json\\12.0.2\\newtonsoft.json.12.0.2.nupkg.sha512",
+    "C:\\Users\\SarathiV\\.nuget\\packages\\newtonsoft.json.bson\\1.0.2\\newtonsoft.json.bson.1.0.2.nupkg.sha512",
+    "C:\\Users\\SarathiV\\.nuget\\packages\\system.io.packaging\\4.7.0\\system.io.packaging.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

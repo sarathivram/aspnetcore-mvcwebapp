@@ -1,0 +1,378 @@
+﻿@model YOYOTest.Models.YOYOTestTrack
+
+@using System.Linq;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Html;
+
+@{
+  ViewData["Title"] = "Home Page";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+  h1 {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.2);
+  border-bottom: 3px solid #00bfeb;
+  font-size: calc(1em + 1vmax);
+  }
+
+  .counter {
+  display: inline-flex;
+  cursor: pointer;
+  width: 300px;
+  height: 300px;
+  max-width: 100%;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  font-size: calc(1em + 1vmin);
+  transition: height .2s ease-in-out;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.2);
+  margin: 1em 0;
+  }
+
+  .percentage {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 0;
+  right: 0;
+  vertical-align: middle;
+  transform: translate3d(0, -50%, 0);
+  }
+
+  canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  }
+
+  input {
+  width: 200px;
+  }
+
+  body {
+  font-family: 'Open Sans', sans-serif;
+  text-align: center;
+  }
+</style>
+
+<div id="TimeDistance">
+  <div class="row">
+    <div class="playbtn" onclick="playbtn(event)">
+      <img class="play" style="height: 255px; width:500px" src="~/image/button-png.png">
+    </div>
+    <div class="col-6 col-sm-3 startbtn" style="display: none">
+      <div class="counter" data-cp-percentage="75" data-cp-color="#00bfeb"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>NEXT<br />SHUTTLE<br /><span id="nextshuttletime">00:</span> s&nbsp;&nbsp;</div> &nbsp;&nbsp;
+    <div style="height: 60px;  border-left: 2px solid black;"></div>
+    &nbsp;&nbsp;
+    <div>TOTAL<br />TIME <br />
+      <div id="timer">
+        <span hidden="true" id="hours">00:</span>
+        <span id="mins">00:</span>
+        <span id="seconds">00</span> m
+      </div> &nbsp;&nbsp;
+    </div> &nbsp;&nbsp;
+    <div style="height: 60px;  border-left: 2px solid black;"></div>
+    &nbsp;&nbsp;
+    <div>TOTAL<br />DISTANCE <br /><span id="totalDistance">00:0</span>m</div>
+  </div>
+</div>
+
+<div class="row">
+  <table id="trackTable" style="height: 500px" class="table table-striped table-hover table-responsive" >
+    @for (var i = 0; i < Model.players.Count(); i++)
+    {
+      <tr>
+        <td>
+          @Html.HiddenFor(it => it.players[i].id)
+        </td>
+        <td> &nbsp;
+          @Html.DisplayFor(it => it.players[i].name)
+        </td>
+        <td onclick="warn(event)">
+          &nbsp; &nbsp; <button class="btn btn-primary button tdwarn">Warn</button>
+        </td>
+        <td onclick="stop(event)">
+          &nbsp; &nbsp; <button class="btn btn-warning button tdstop">Stop</button>&nbsp; &nbsp;
+        </td>
+        <td>
+          <div class="btn-group" >
+            <button class="btn btn-white btn-sm dropdown-toggle" onclick="openMenus(event)" type="button"
+            aria-haspopup="true" aria-expanded="false">
+             <span class="clsLevel">0</span>-<span class="clsShuttle">0</span>
+            </button>
+            <div class="dropdown-menu">
+              <div class="dropdown-item" >Level : <span style="width: 50px" class="clsLevel float-right p-1" onclick="updateVal(event)">0</span>
+              <input type="text" value="" class="levelinput d-none"/>
+              </div>
+              <div class="dropdown-item" >Shuttle : <span style="width: 50px" class="clsShuttle float-right p-1" onclick="updateVal(event)">0</span>
+              <input type="text" value="" class="shuttleinput d-none"/>
+              </div>
+              <div class="dropdown-item" ><button class="btn btn-sm btn-primary" onclick="save(event)">Update</button> </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    }
+  </table>
+</div>
+
+<script type="text/javascript">
+  var level, shuttle, levelTime, mdlspeed, mdlStarttime;
+  var commonIndex = 0;
+  var circleProgress, wrapper;
+
+  function openMenus(event){
+    var parentNode = event.currentTarget.parentNode.parentNode;
+    $(parentNode.querySelector('.btn-group')).addClass('show');
+    $(parentNode.querySelector('.dropdown-menu')).addClass('show');
+  }
+
+  function  updateVal(event)
+  {
+    var parentNode = event.currentTarget.parentNode.parentNode.parentNode;
+    $(parentNode.querySelector('.clsLevel')).addClass('d-none');
+    $(parentNode.querySelector('.clsShuttle')).addClass('d-none');
+    $(parentNode.querySelector('.levelinput')).removeClass('d-none');
+    $(parentNode.querySelector('.shuttleinput')).removeClass('d-none');
+    $(parentNode.querySelector('.levelinput')).val(parentNode.querySelector('.clsLevel').innerText);
+    $(parentNode.querySelector('.shuttleinput')).val(parentNode.querySelector('.clsShuttle').innerText);
+    @* console.log(parentNode.innerText); *@
+  }
+
+  function save(event){
+    var parentNode = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode;
+    $(parentNode.querySelectorAll('.clsLevel')).text($(parentNode.querySelector('.levelinput')).val());
+    $(parentNode.querySelectorAll('.clsShuttle')).text($(parentNode.querySelector('.shuttleinput')).val());
+    $(parentNode.querySelector('.clsLevel')).removeClass('d-none');
+    $(parentNode.querySelector('.clsShuttle')).removeClass('d-none');
+    $(parentNode.querySelector('.levelinput')).addClass('d-none');
+    $(parentNode.querySelector('.shuttleinput')).addClass('d-none');
+    $(parentNode.querySelector('.btn-group')).removeClass('show');
+    $(parentNode.querySelector('.dropdown-menu')).removeClass('show');
+     
+  }
+
+  function AssignVal(indexval) {
+  commonIndex = indexval;
+  var model = @Html.Raw(Json.Serialize(@Model.fitnessratings));
+  level = model[indexval].speedLevel;
+  shuttle = model[indexval].shuttleNo;
+  levelTime = parseFloat(model[indexval].levelTime) * (1000);
+  mdlspeed = model[indexval].speed;
+  mdlStartSec = model[indexval + 1].startTime;
+  $('#nextshuttletime').text(model[indexval + 1].levelTime);
+  $('#totalDistance').html(model[indexval].accumulatedShuttleDistance);
+  }
+
+  function stop(event) {
+  var parentNode = event.target.parentNode.parentNode;
+  $(parentNode.querySelector('.tdwarn')).css("display", "none");
+  $(parentNode.querySelector('.tdstop')).css("display", "none");
+  $(parentNode.querySelectorAll('.clsShuttle')).text(shuttle);
+  $(parentNode.querySelectorAll('.clsLevel')).text(level);
+  }
+
+  function warn(event) {
+  var parentNode = event.target.parentNode.parentNode;
+  console.log(parentNode.innerHTML);
+  $(parentNode.querySelector('.tdwarn')).removeClass("btn-primary").addClass("btn-secondary");
+  }
+
+  $(document).ready(function () {
+  var hours = 0;
+  var mins = 0;
+  var seconds = 0;
+  var Starttimeval = new Date();
+  var Resttimeval = new Date();
+
+  var setStarttimeval = new Date(Starttimeval.setSeconds(0));
+  var setResttimeval = new Date(Resttimeval.setSeconds(0));
+
+  var minToMilli = 0; var secToMilli = 0;
+  var curMilliSec = 0;
+  var currenttime = 0;
+
+
+  function startTimer() {
+  timex = setTimeout(function () {
+  setStarttimeval.setSeconds(levelTime / 1000);
+  setResttimeval.setSeconds(mdlStartSec);
+
+  seconds++;
+  currenttime++;
+
+  if (setStarttimeval.getSeconds() < currenttime) {
+  currenttime = 0;
+  AssignVal(commonIndex + 1);
+  $('.counter').click();
+  }
+
+  if (setResttimeval.getSeconds() > curMilliSec) {
+  //callStartTime      
+  console.log('startYes');
+  }
+
+  if (seconds > 59) {
+  seconds = 0;
+  mins++;
+  minToMilli = mins * 60;
+  if (mins > 59) {
+  mins = 0;
+  hours++;
+  if (hours < 10) {
+  $("#hours").text("0" + hours + ":");
+  } else $("#hours").text(hours + ":");
+  }
+  if (mins < 10) {
+  $("#mins").text("0" + mins + ":");
+  } else $("#mins").text(mins + ":");
+  }
+  if (seconds < 10) {
+  $("#seconds").text("0" + seconds);
+  } else {
+  $("#seconds").text(seconds);
+  }
+  startTimer();
+  }, 1000);
+  }
+
+ $(".play").click(function () {
+  startTimer();
+   document.querySelector(".play").style.display = "none";
+  document.querySelector(".startbtn").style.display = "block";
+  AssignVal(0);
+  }); 
+
+  });
+
+  function playbtn(event) {
+  @* document.querySelector(".play").style.display = "none";
+  document.querySelector(".startbtn").style.display = "block";
+  AssignVal(0); *@
+  setTimeout(function(){
+    $('.counter').click();
+  },100)
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+  circleProgress = (function (selector) {
+  wrapper = document.querySelectorAll(selector);
+  Array.prototype.forEach.call(wrapper, function (wrapper, i) {
+  var wrapperWidth,
+  wrapperHeight,
+  percent,
+  innerHTML,
+  context,
+  lineWidth,
+  centerX,
+  centerY,
+  radius,
+  newPercent,
+  speed,
+  from,
+  to,
+  duration,
+  start,
+  strokeStyle,
+  text;
+
+  var getValues = function () {
+  wrapperWidth = parseInt(window.getComputedStyle(wrapper).width);
+  wrapperHeight = wrapperWidth;
+  percent = 10;
+
+  innerHTML = '<span class="percentage"></span><canvas class="circleProgressCanvas" width="' + (wrapperWidth * 2) + '" height="' + wrapperHeight * 2 + '"></canvas>';
+  wrapper.innerHTML = innerHTML;
+  text = wrapper.querySelector(".percentage");
+  canvas = wrapper.querySelector(".circleProgressCanvas");
+  wrapper.style.height = canvas.style.width = canvas.style.height = wrapperWidth + "px";
+  context = canvas.getContext('2d');
+  centerX = canvas.width / 2;
+  centerY = canvas.height / 2;
+  newPercent = 0;
+  speed = 1;
+  from = 0;
+  to = 100;
+  duration = levelTime;
+  lineWidth = 20;
+  radius = canvas.width / 2 - lineWidth;
+  strokeStyle = wrapper.getAttribute('data-cp-color');
+  start = new Date().getTime();
+  };
+
+  function animate() {
+  requestAnimationFrame(animate);
+  var time = new Date().getTime() - start;
+  if (time <= duration) {
+  var x = easeInOutQuart(time, from, to - from, duration);
+  newPercent = x;
+  text.innerHTML = "Level :" + level + " <br/> Shuttle :" + shuttle + "<br/>" + mdlspeed + "km/h";
+  drawArc();
+  }
+  }
+
+  function drawArc() {
+  var circleStart = 1.5 * Math.PI;
+  var circleEnd = circleStart + (newPercent / 50) * Math.PI;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.beginPath();
+  context.arc(centerX, centerY, radius, circleStart, 4 * Math.PI, false);
+  context.lineWidth = lineWidth;
+  context.strokeStyle = "#ddd";
+  context.stroke();
+  context.beginPath();
+  context.arc(centerX, centerY, radius, circleStart, circleEnd, false);
+  context.lineWidth = lineWidth;
+  context.strokeStyle = strokeStyle;
+  context.stroke();
+
+  }
+  var update = function () {
+  getValues();
+  animate();
+  }
+  update();
+
+  var btnUpdate = document.querySelectorAll(".btn-update")[0];
+
+  wrapper.addEventListener("click", function () {
+  update();
+  });
+
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function () {
+  clearTimeout(resizeTimer);
+  start = new Date().getTime();
+  update();
+  }, 250);
+  });
+  });
+
+  function easeInOutQuart(t, b, c, d) {
+  if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+  return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+  }
+
+  });
+
+  circleProgress('.counter');
+
+  function getRandom(min, max) {
+  return Math.random() * (max - min) + min;
+  }
+   });
+
+</script>
