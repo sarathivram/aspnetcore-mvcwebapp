@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using YOYOTest.Models;
 using YOYOTest.Business.Interface;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 
 namespace YOYOTest.Controllers

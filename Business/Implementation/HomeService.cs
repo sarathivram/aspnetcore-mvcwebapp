@@ -1,10 +1,8 @@
-using System;
 using System.IO;
 using Newtonsoft.Json;
 using YOYOTest.Business.Interface;
 using YOYOTest.Models;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Hosting;
 
 namespace YOYOTest.Business.Implementation
 {
